@@ -1,8 +1,9 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
 from app.init_db import init_db
 from app.routers import slots, history, users, lots
+
 
 app = FastAPI(
     title="Smart Parking Lot API",
@@ -22,11 +23,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(lots.router)
-app.include_router(users.router)
-app.include_router(slots.router)
-app.include_router(history.router)
+api = APIRouter(prefix="/api")
+api.include_router(lots.router)
+api.include_router(users.router)
+api.include_router(slots.router)
+api.include_router(history.router)
 
+app.include_router(api)
 
 @app.on_event("startup")
 def startup():
